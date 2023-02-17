@@ -1,10 +1,14 @@
 package com.example.cfgmocks;
 
+import com.example.cfgmocks.exception.EnquiryNotFoundException;
+import com.example.cfgmocks.models.Bundle;
 import com.example.cfgmocks.models.CreateBundleRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,9 +33,16 @@ class CreateBundleOrchestratorTest {
 
     // write a test for when the transaction source is not backoffice
     @Test
-    void createNewBundleWhenTransactionSourceIsNotBackoffice() {
+    void createNewBundleWhenTransactionSourceIsNotBackoffice() throws EnquiryNotFoundException {
 
+        Mockito.when(mockCreateNewBundle.create(createBundleRequest)).thenReturn(
+                Bundle.builder().id("bundleId1").formVersion("1").build()
+        );
 
+        Bundle bundle = createBundleOrchestrator
+                .orchestrateBundleCreation("whatever", createBundleRequest);
+
+        Assertions.assertEquals(bundle.getId(), "bundleId1");
     }
 
     // write a test for when
